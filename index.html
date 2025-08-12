@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>C1 Advanced Grammar Practice</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f7fa;
+        }
+        
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 28px;
+        }
+        
+        .question {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        
+        .question-text {
+            font-weight: bold;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+        
+        .options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .option {
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .option:hover {
+            background-color: #f0f0f0;
+        }
+        
+        .option.selected {
+            border-color: #3498db;
+            background-color: #e1f0fa;
+        }
+        
+        .option.correct {
+            border-color: #2ecc71;
+            background-color: #d4edda;
+        }
+        
+        .option.incorrect {
+            border-color: #e74c3c;
+            background-color: #f8d7da;
+        }
+        
+        .submit-btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: background-color 0.3s;
+        }
+        
+        .submit-btn:hover {
+            background-color: #2980b9;
+        }
+        
+        .submit-btn:disabled {
+            background-color: #95a5a6;
+            cursor: not-allowed;
+        }
+        
+        .feedback {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 6px;
+            display: none;
+        }
+        
+        .correct-feedback {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .incorrect-feedback {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .explanation {
+            margin-top: 10px;
+            font-style: italic;
+            color: #7f8c8d;
+        }
+        
+        .progress-container {
+            margin-bottom: 30px;
+            background-color: #ecf0f1;
+            border-radius: 10px;
+            height: 10px;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            border-radius: 10px;
+            background-color: #3498db;
+            width: 0%;
+            transition: width 0.5s;
+        }
+        
+        .score-container {
+            text-align: center;
+            margin-top: 30px;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            display: none;
+        }
+        
+        .score {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        
+        .restart-btn {
+            padding: 10px 20px;
+            background-color: #2ecc71;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: background-color 0.3s;
+        }
+        
+        .restart-btn:hover {
+            background-color: #27ae60;
+        }
+    </style>
+</head>
+<body>
+    <h1>C1 Advanced Grammar Practice</h1>
+    
+    <div class="progress-container">
+        <div class="progress-bar" id="progressBar"></div>
+    </div>
+    
+    <div id="quizContainer"></div>
+    
+    <div class="score-container" id="scoreContainer">
+        <div class="score">Your score: <span id="finalScore">0</span>/40</div>
+        <button class="restart-btn" onclick="restartQuiz()">Restart Quiz</button>
+    </div>
+    
+    <script>
+        const questions = [
+            // Prepositions (5 questions)
+            {
+                question: "She has a remarkable ability to adapt ____ new situations quickly.",
+                options: ["at", "to", "with", "for"],
+                answer: 1,
+                explanation: "The correct preposition is 'to' - 'adapt to' is the correct collocation."
+            },
+            {
+                question: "The research team was commended ____ their groundbreaking discovery.",
+                options: ["for", "on", "about", "with"],
+                answer: 0,
+                explanation: "The correct preposition is 'for' - 'commended for' is the correct collocation."
+            },
+            {
+                question: "His argument was based ____ flawed assumptions from the outset.",
+                options: ["in", "on", "at", "by"],
+                answer: 1,
+                explanation: "The correct preposition is 'on' - 'based on' is the correct collocation."
+            },
+            {
+                question: "We need to focus ____ improving customer satisfaction this quarter.",
+                options: ["in", "on", "at", "with"],
+                answer: 1,
+                explanation: "The correct preposition is 'on' - 'focus on' is the correct collocation."
+            },
+            {
+                question: "The company is highly regarded ____ its innovative approach to problem-solving.",
+                options: ["for", "by", "with", "at"],
+                answer: 0,
+                explanation: "The correct preposition is 'for' - 'regarded for' is the correct collocation."
+            },
+            
+            // Adjectives (4 questions)
+            {
+                question: "The ____ landscape took our breath away as we reached the mountain summit.",
+                options: ["spectacular", "spectacularly", "spectacle", "spectating"],
+                answer: 0,
+                explanation: "The correct answer is 'spectacular' - we need an adjective to describe the landscape."
+            },
+            {
+                question: "Her ____ attention to detail makes her an excellent editor.",
+                options: ["meticulous", "meticulously", "meticulousness", "meticulate"],
+                answer: 0,
+                explanation: "The correct answer is 'meticulous' - we need an adjective to describe her attention."
+            },
+            {
+                question: "The proposal was rejected as being ____ unrealistic given the current budget constraints.",
+                options: ["utter", "utterly", "uttering", "uttered"],
+                answer: 1,
+                explanation: "The correct answer is 'utterly' - we need an adverb to modify the adjective 'unrealistic'."
+            },
+            {
+                question: "His ____ behavior during the crisis earned him widespread admiration.",
+                options: ["commendable", "commended", "commending", "commendably"],
+                answer: 0,
+                explanation: "The correct answer is 'commendable' - we need an adjective to describe his behavior."
+            },
+            
+            // Relative pronouns (3 questions)
+            {
+                question: "The scientist, ____ research has revolutionized the field, will be giving a lecture next week.",
+                options: ["who", "whose", "whom", "which"],
+                answer: 1,
+                explanation: "The correct answer is 'whose' - we need a possessive relative pronoun for 'research'."
+            },
+            {
+                question: "This is the village ____ I spent my childhood summers.",
+                options: ["where", "which", "who", "when"],
+                answer: 0,
+                explanation: "The correct answer is 'where' - we need a relative pronoun referring to a place."
+            },
+            {
+                question: "The documents ____ you requested have been prepared and are ready for collection.",
+                options: ["who", "whose", "which", "whom"],
+                answer: 2,
+                explanation: "The correct answer is 'which' - we need a relative pronoun referring to objects (documents)."
+            },
+            
+            // Linking words/connectors (4 questions)
+            {
+                question: "The experiment yielded unexpected results; ____, it opened up new avenues for research.",
+                options: ["however", "nevertheless", "consequently", "furthermore"],
+                answer: 2,
+                explanation: "The correct answer is 'consequently' - showing a result relationship between the clauses."
+            },
+            {
+                question: "____ the initial setbacks, the project was ultimately completed on time and within budget.",
+                options: ["Despite", "Although", "Because of", "Whereas"],
+                answer: 0,
+                explanation: "The correct answer is 'Despite' - showing contrast with the initial setbacks."
+            },
+            {
+                question: "The data was inconclusive; ____, we cannot draw any definitive conclusions at this stage.",
+                options: ["therefore", "however", "moreover", "nevertheless"],
+                answer: 0,
+                explanation: "The correct answer is 'therefore' - showing a logical conclusion from the first clause."
+            },
+            {
+                question: "____ the complexity of the issue, we must approach it systematically and carefully.",
+                options: ["Given", "Unless", "Whereas", "Lest"],
+                answer: 0,
+                explanation: "The correct answer is 'Given' - meaning 'considering' or 'taking into account'."
+            },
+            
+            // Phrasal verbs (4 questions)
+            {
+                question: "After much deliberation, we decided to ____ the new marketing strategy.",
+                options: ["go after", "go over", "go ahead with", "go back on"],
+                answer: 2,
+                explanation: "The correct answer is 'go ahead with' - meaning to proceed with something."
+            },
+            {
+                question: "The committee will ____ the applications and notify successful candidates by Friday.",
+                options: ["look into", "look after", "look over", "look forward to"],
+                answer: 2,
+                explanation: "The correct answer is 'look over' - meaning to examine or review something."
+            },
+            {
+                question: "We need to ____ the problem before we can find an effective solution.",
+                options: ["get across", "get around", "get at", "get by"],
+                answer: 2,
+                explanation: "The correct answer is 'get at' - meaning to discover or understand something."
+            },
+            {
+                question: "The company had to ____ several obstacles before the product could be launched.",
+                options: ["come across", "come up against", "come into", "come round to"],
+                answer: 1,
+                explanation: "The correct answer is 'come up against' - meaning to encounter difficulties."
+            },
+            
+            // Past modals (3 questions)
+            {
+                question: "You ____ told me you were coming - I would have prepared something special for dinner!",
+                options: ["must have", "could have", "should have", "might have"],
+                answer: 2,
+                explanation: "The correct answer is 'should have' - expressing a missed obligation or expectation."
+            },
+            {
+                question: "The lights are off - they ____ left the office already.",
+                options: ["must have", "should have", "would have", "might have"],
+                answer: 0,
+                explanation: "The correct answer is 'must have' - expressing a logical deduction about the past."
+            },
+            {
+                question: "I ____ finished the report yesterday, but I was called away to an emergency meeting.",
+                options: ["must have", "could have", "should have", "would have"],
+                answer: 1,
+                explanation: "The correct answer is 'could have' - expressing past possibility that didn't happen."
+            },
+            
+            // Perfect tenses (4 questions)
+            {
+                question: "By the time we arrived at the venue, the keynote speaker ____ her presentation.",
+                options: ["has finished", "had finished", "finished", "was finishing"],
+                answer: 1,
+                explanation: "The correct answer is 'had finished' - past perfect for an action completed before another past action."
+            },
+            {
+                question: "Next month, I ____ working here for exactly ten years.",
+                options: ["will be", "will have been", "have been", "had been"],
+                answer: 1,
+                explanation: "The correct answer is 'will have been' - future perfect continuous for duration up to a future point."
+            },
+            {
+                question: "She ____ in London for three years before moving to New York.",
+                options: ["has lived", "had lived", "was living", "lived"],
+                answer: 1,
+                explanation: "The correct answer is 'had lived' - past perfect for duration before another past action."
+            },
+            {
+                question: "By 2025, scientists ____ a cure for this disease, according to current projections.",
+                options: ["will discover", "will be discovering", "will have discovered", "are discovering"],
+                answer: 2,
+                explanation: "The correct answer is 'will have discovered' - future perfect for completion before a future time."
+            },
+            
+            // Collocations (4 questions)
+            {
+                question: "The new policy has ____ a significant impact on small businesses.",
+                options: ["done", "had", "made", "taken"],
+                answer: 1,
+                explanation: "The correct answer is 'had' - 'have an impact' is the correct collocation."
+            },
+            {
+                question: "We need to ____ advantage of this opportunity before it's too late.",
+                options: ["make", "take", "have", "do"],
+                answer: 1,
+                explanation: "The correct answer is 'take' - 'take advantage of' is the correct collocation."
+            },
+            {
+                question: "The CEO ____ full responsibility for the company's recent setbacks.",
+                options: ["took", "made", "had", "did"],
+                answer: 0,
+                explanation: "The correct answer is 'took' - 'take responsibility' is the correct collocation."
+            },
+            {
+                question: "The research team ____ great strides in understanding the disease mechanism.",
+                options: ["did", "made", "had", "took"],
+                answer: 1,
+                explanation: "The correct answer is 'made' - 'make strides' is the correct collocation."
+            },
+            
+            // Fixed phrases (4 questions)
+            {
+                question: "____, we managed to complete the project on time despite all the difficulties.",
+                options: ["All in all", "By and large", "At the end of the day", "By hook or by crook"],
+                answer: 0,
+                explanation: "The correct answer is 'All in all' - meaning 'considering everything'."
+            },
+            {
+                question: "The results were disappointing, but ____, we learned a lot from the experience.",
+                options: ["at the end", "on the contrary", "in the long run", "on the other hand"],
+                answer: 2,
+                explanation: "The correct answer is 'in the long run' - meaning 'over an extended period of time'."
+            },
+            {
+                question: "____, I think we should proceed with caution until we have more data.",
+                options: ["For the time being", "At times", "In no time", "From time to time"],
+                answer: 0,
+                explanation: "The correct answer is 'For the time being' - meaning 'for now, temporarily'."
+            },
+            {
+                question: "The negotiations were tough, but ____ we reached an agreement that satisfied both parties.",
+                options: ["at last", "at least", "at most", "at once"],
+                answer: 0,
+                explanation: "The correct answer is 'at last' - meaning 'finally, after much delay'."
+            },
+            
+            // Articles (3 questions)
+            {
+                question: "She has ____ MBA from Harvard and now works as ____ consultant.",
+                options: ["an, a", "a, a", "an, the", "the, a"],
+                answer: 0,
+                explanation: "The correct answer is 'an, a' - 'an' before vowel sounds (MBA is pronounced 'em-bee-ay'), 'a' before consonant sounds."
+            },
+            {
+                question: "____ United Nations plays ____ crucial role in international diplomacy.",
+                options: ["The, a", "A, the", "The, the", "- , a"],
+                answer: 0,
+                explanation: "The correct answer is 'The, a' - 'the' for specific organizations, 'a' for non-specific roles."
+            },
+            {
+                question: "He's ____ expert in ____ European history, particularly the Renaissance period.",
+                options: ["an, -", "a, -", "an, the", "the, a"],
+                answer: 0,
+                explanation: "The correct answer is 'an, -' - 'an' before vowel sounds, no article before general fields of study."
+            }
+        ];
+
+        let currentQuestion = 0;
+        let score = 0;
+        let userAnswers = Array(questions.length).fill(null);
+        
+        function displayQuestion() {
+            const quizContainer = document.getElementById("quizContainer");
+            const question = questions[currentQuestion];
+            
+            quizContainer.innerHTML = `
+                <div class="question">
+                    <div class="question-text">${currentQuestion + 1}. ${question.question}</div>
+                    <div class="options">
+                        ${question.options.map((option, index) => `
+                            <div class="option ${userAnswers[currentQuestion] === index ? 'selected' : ''}" 
+                                 onclick="selectOption(${index})">
+                                ${String.fromCharCode(65 + index)}. ${option}
+                            </div>
+                        `).join('')}
+                    </div>
+                    <button class="submit-btn" ${userAnswers[currentQuestion] === null ? 'disabled' : ''} 
+                            onclick="checkAnswer()">Submit</button>
+                    <div class="feedback" id="feedback"></div>
+                </div>
+            `;
+            
+            updateProgressBar();
+        }
+        
+        function selectOption(optionIndex) {
+            const options = document.querySelectorAll('.option');
+            options.forEach(option => option.classList.remove('selected'));
+            options[optionIndex].classList.add('selected');
+            
+            userAnswers[currentQuestion] = optionIndex;
+            document.querySelector('.submit-btn').disabled = false;
+        }
+        
+        function checkAnswer() {
+            const question = questions[currentQuestion];
+            const selectedOption = userAnswers[currentQuestion];
+            const feedback = document.getElementById("feedback");
+            
+            if (selectedOption === question.answer) {
+                score++;
+                feedback.innerHTML = `
+                    <div class="correct-feedback">✓ Correct!</div>
+                    <div class="explanation">${question.explanation}</div>
+                `;
+            } else {
+                feedback.innerHTML = `
+                    <div class="incorrect-feedback">✗ Incorrect. The correct answer is ${String.fromCharCode(65 + question.answer)}. ${question.options[question.answer]}</div>
+                    <div class="explanation">${question.explanation}</div>
+                `;
+            }
+            
+            feedback.style.display = 'block';
+            document.querySelector('.submit-btn').disabled = true;
+            
+            // Highlight correct and incorrect answers
+            const options = document.querySelectorAll('.option');
+            options.forEach((option, index) => {
+                if (index === question.answer) {
+                    option.classList.add('correct');
+                } else if (index === selectedOption && selectedOption !== question.answer) {
+                    option.classList.add('incorrect');
+                }
+            });
+            
+            // Move to next question after a delay
+            setTimeout(() => {
+                currentQuestion++;
+                if (currentQuestion < questions.length) {
+                    displayQuestion();
+                } else {
+                    showFinalScore();
+                }
+            }, 2000);
+        }
+        
+        function updateProgressBar() {
+            const progress = ((currentQuestion) / questions.length) * 100;
+            document.getElementById("progressBar").style.width = `${progress}%`;
+        }
+        
+        function showFinalScore() {
+            document.getElementById("quizContainer").style.display = 'none';
+            document.getElementById("progressBar").style.width = '100%';
+            
+            const scoreContainer = document.getElementById("scoreContainer");
+            document.getElementById("finalScore").textContent = score;
+            scoreContainer.style.display = 'block';
+        }
+        
+        function restartQuiz() {
+            currentQuestion = 0;
+            score = 0;
+            userAnswers = Array(questions.length).fill(null);
+            
+            document.getElementById("quizContainer").style.display = 'block';
+            document.getElementById("scoreContainer").style.display = 'none';
+            
+            displayQuestion();
+        }
+        
+        // Initialize the quiz
+        displayQuestion();
+    </script>
+</body>
+</html>
