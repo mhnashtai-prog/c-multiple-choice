@@ -7,7 +7,8 @@
     <style>
         :root {
             --primary: #3498db;
-            --success: #2ecc71;
+            --success: #27ae60;
+            --success-light: #d5f5e3;
             --danger: #e74c3c;
             --warning: #f39c12;
             --dark: #2c3e50;
@@ -92,7 +93,7 @@
         
         .option.correct {
             border-color: var(--success);
-            background-color: #e8f8f0;
+            background-color: var(--success-light);
         }
         
         .option.incorrect {
@@ -129,6 +130,21 @@
             background-color: #2980b9;
         }
         
+        .btn-success {
+            background-color: var(--success);
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background-color: #219653;
+        }
+        
+        .btn-success-light {
+            background-color: var(--success-light);
+            color: var(--success);
+            cursor: not-allowed;
+        }
+        
         .btn-secondary {
             background-color: var(--gray);
             color: white;
@@ -136,33 +152,6 @@
         
         .btn-secondary:hover {
             background-color: #7f8c8d;
-        }
-        
-        .btn-success {
-            background-color: var(--success);
-            color: white;
-        }
-        
-        .btn-success:hover {
-            background-color: #27ae60;
-        }
-        
-        .btn-danger {
-            background-color: var(--danger);
-            color: white;
-        }
-        
-        .btn-danger:hover {
-            background-color: #c0392b;
-        }
-        
-        .btn-warning {
-            background-color: var(--warning);
-            color: white;
-        }
-        
-        .btn-warning:hover {
-            background-color: #d35400;
         }
         
         .btn-sm {
@@ -185,7 +174,7 @@
         }
         
         .correct-feedback {
-            background-color: #e8f8f0;
+            background-color: var(--success-light);
             color: #155724;
             border: 1px solid #c3e6cb;
         }
@@ -234,6 +223,12 @@
             font-size: 28px;
             font-weight: bold;
             color: var(--dark);
+            margin-bottom: 10px;
+        }
+        
+        .percentage {
+            font-size: 24px;
+            color: var(--success);
             margin-bottom: 15px;
         }
         
@@ -284,8 +279,8 @@
             
             <div class="button-group">
                 <button class="btn btn-primary" id="submitBtn">SUBMIT</button>
-                <button class="btn btn-warning" id="answerBtn">ANSWER</button>
-                <button class="btn btn-success" id="nextBtn">NEXT</button>
+                <button class="btn btn-success-light" id="answerBtn">ANSWER</button>
+                <button class="btn btn-secondary" id="nextBtn">NEXT</button>
                 <button class="btn btn-sm btn-secondary" id="returnBtn">RETURN</button>
             </div>
             
@@ -295,6 +290,7 @@
     
     <div class="score-container" id="scoreContainer">
         <div class="score">Your score: <span id="finalScore">0</span>/40</div>
+        <div class="percentage" id="percentageScore"></div>
         <div class="score-message" id="scoreMessage"></div>
         <button class="restart-btn" id="restartBtn">BACK TO THE START</button>
     </div>
@@ -568,6 +564,7 @@
         const progressBar = document.getElementById("progressBar");
         const scoreContainer = document.getElementById("scoreContainer");
         const finalScore = document.getElementById("finalScore");
+        const percentageScore = document.getElementById("percentageScore");
         const scoreMessage = document.getElementById("scoreMessage");
         const restartBtn = document.getElementById("restartBtn");
         
@@ -616,17 +613,15 @@
         
         function updateButtonStates() {
             submitBtn.disabled = userAnswers[currentQuestion] === null || answeredQuestions[currentQuestion];
-            answerBtn.disabled = answeredQuestions[currentQuestion];
             nextBtn.disabled = !answeredQuestions[currentQuestion];
             
+            // Update ANSWER button state and appearance
             if (answeredQuestions[currentQuestion]) {
-                submitBtn.classList.add('disabled');
-                answerBtn.classList.add('disabled');
-                nextBtn.classList.remove('disabled');
+                answerBtn.className = 'btn btn-success';
+                answerBtn.disabled = false;
             } else {
-                submitBtn.classList.toggle('disabled', userAnswers[currentQuestion] === null);
-                answerBtn.classList.remove('disabled');
-                nextBtn.classList.add('disabled');
+                answerBtn.className = 'btn btn-success-light';
+                answerBtn.disabled = true;
             }
             
             returnBtn.style.visibility = currentQuestion > 0 ? 'visible' : 'hidden';
@@ -668,19 +663,13 @@
         }
         
         function showAnswer() {
-            if (answeredQuestions[currentQuestion]) return;
-            
             const question = questions[currentQuestion];
-            userAnswers[currentQuestion] = question.answer;
-            answeredQuestions[currentQuestion] = true;
             
             feedback.innerHTML = `
                 <div class="correct-feedback">The correct answer is ${String.fromCharCode(65 + question.answer)}. ${question.options[question.answer]}</div>
                 <div class="explanation">${question.explanation}</div>
             `;
             feedback.style.display = 'block';
-            
-            displayQuestion();
         }
         
         function nextQuestion() {
@@ -712,13 +701,16 @@
             
             finalScore.textContent = score;
             const percentage = Math.round((score / questions.length) * 100);
+            percentageScore.textContent = `${percentage}%`;
             
-            if (percentage >= 80) {
-                scoreMessage.textContent = "Excellent work! You've mastered these grammar points.";
-            } else if (percentage >= 60) {
-                scoreMessage.textContent = "Good job! You're well on your way to mastery.";
+            if (percentage >= 85) {
+                scoreMessage.textContent = "Excellent work! You've demonstrated mastery of these advanced grammar points.";
+            } else if (percentage >= 70) {
+                scoreMessage.textContent = "Very good! You have a strong command of these grammar structures.";
+            } else if (percentage >= 50) {
+                scoreMessage.textContent = "Good effort! Review the explanations to strengthen your understanding.";
             } else {
-                scoreMessage.textContent = "Keep practicing! Review the explanations to improve.";
+                scoreMessage.textContent = "Keep practicing! Focus on the explanations to improve your skills.";
             }
             
             scoreContainer.style.display = 'block';
